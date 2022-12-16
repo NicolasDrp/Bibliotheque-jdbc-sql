@@ -94,7 +94,7 @@ public class Livre implements Serializable{
 	    	
 	    	// the lowercase c refers to the object
 	    	// :custID is a parameterized query thats value is set below
-	    	String query = "SELECT c FROM Livre c WHERE c.titre = :titre";
+	    	String query = "SELECT l FROM Livre l WHERE lower(l.titre) like lower(CONCAT('%',:titre ,'%'))";
 	    	
 	    	// Issue the query and get a matching Customer
 	    	TypedQuery<Livre> tq = em.createQuery(query, Livre.class);
@@ -120,7 +120,7 @@ public class Livre implements Serializable{
 		
 		 	EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
 		 	EntityTransaction et = null;
-		 	String query = "SELECT c FROM Livre c WHERE c.titre LIKE :titre";
+		 	String query = "SELECT l FROM Livre l WHERE l.titre LIKE :titre";
 			TypedQuery<Livre> tq = em.createQuery(query, Livre.class);
 			Livre livre = null;
 			tq.setParameter("titre", titre);
@@ -150,7 +150,7 @@ public class Livre implements Serializable{
 	    	
 	    	// the lowercase c refers to the object
 	    	// :custID is a parameterized query thats value is set below
-	    	String strQuery = "SELECT c FROM Livre c WHERE c.id IS NOT NULL";
+	    	String strQuery = "SELECT l FROM Livre l WHERE l.id IS NOT NULL";
 	    	
 	    	// Issue the query and get a matching Customer
 	    	TypedQuery<Livre> tq = em.createQuery(strQuery, Livre.class);
@@ -173,7 +173,7 @@ public class Livre implements Serializable{
 	 public void supprimerLivre(String titre) {
 		  EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
 		  EntityTransaction et = null;
-		  String query = "SELECT c FROM Livre c WHERE c.titre LIKE :titre";
+		  String query = "SELECT l FROM Livre l WHERE l.titre LIKE :titre";
 		  TypedQuery<Livre> tq = em.createQuery(query, Livre.class);
 		  Livre livre = null;
 		  tq.setParameter("titre", titre);

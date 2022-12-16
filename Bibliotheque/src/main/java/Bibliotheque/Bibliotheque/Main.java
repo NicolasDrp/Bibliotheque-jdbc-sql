@@ -8,7 +8,7 @@ public class Main {
 	public static void main(String[] args) {
 		
 		Livre livre = new Livre();
-		//livre.addLivre("modification", "tempo", "culinaire", 342, 123);
+		//livre.addLivre("j-m le boss", "quelquun", "education", 540, 21);
 		//livre.getLivre("Champion java");
 		//livre.getLivres();
 		//livre.changerTitre("l'Homme,le retour", "encore un nouveau titre");
@@ -31,7 +31,6 @@ public class Main {
 				//rechercher un livre
 				System.out.println("Quel livre cherchez vous ?");
 				String valeur = scan.nextLine();
-				System.out.println(valeur);
 				livre.getLivre(valeur);
 				break;
 			case 3:
@@ -94,20 +93,21 @@ public class Main {
 				livre.addLivre(titre, nom, genre, Nbrpages, Nbrexemplaire);
 				
 				break;
-		/*	case 4:
+			case 4:
 				//modifier un livre existant
 				System.out.println("Quel livre voulez vous modifier ?");
 				//scan le nom puis demander en quoi il veut le modifier
 				break;
 			case 0:
 				//fermer le programme
+				System.out.println("Au revoir");
 				System.exit(0);
 				break;
-			*/
 				
 			}
 		} catch (InputMismatchException e) {
-			System.out.println("veuillez entrer un chiffre entre 0 et 4");
+			System.out.println("veuillez entrer un chiffre entre 0 et 4\r");
+			main(null);
 		}
 		
 		
@@ -115,7 +115,7 @@ public class Main {
 		
 		
 		
-		
+		main(null);
 		scan.close();
 		
 
