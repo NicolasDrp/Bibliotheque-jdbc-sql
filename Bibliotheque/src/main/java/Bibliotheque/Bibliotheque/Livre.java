@@ -42,12 +42,15 @@ public class Livre implements Serializable{
 	@Column(name = "nbrexmp",nullable = false)
 	private int nbrexmp;
 
+	
+	
 	private static EntityManagerFactory ENTITY_MANAGER_FACTORY = Persistence
 			.createEntityManagerFactory("Bibliotheque");
 	
 	
 	
 	//ajouter un livre
+	
 	public void addLivre(String titre,String auteur,String genre,int nbrpages,int nbrexmp) {
 		 // The EntityManager class allows operations such as create, read, update, delete
        EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
@@ -101,7 +104,7 @@ public class Livre implements Serializable{
 	    	try {
 	    		// Get matching customer object and output
 	    		livres = tq.getResultList();
-	    		livres.forEach(livre->System.out.println(livre.getTitre() + " " + livre.getAuteur()));
+	    		livres.forEach(livreS->System.out.println("\rTitre: "+livreS.getTitre() + "\rAuteur: " + livreS.getAuteur()+"\rGenre: "+livreS.getGenre()+"\rNombre de pages: "+livreS.getNbrpages()+"\rNombre d'exmplaire disponible: "+livreS.getNbrexmp()));
 	    	}
 	    	catch(NoResultException ex) {
 	    		ex.printStackTrace();
@@ -111,40 +114,37 @@ public class Livre implements Serializable{
 	    	}
 	    }
 	 
+	 //changer le titre d'un livre
 	 
-	 public void changerTitre2(String titre, String nvtitre) {
-	        EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
-	        EntityTransaction et = null;
-	        
-	    	Livre livre = null;
-	 
-	        try {
-	            // Get transaction and start
-	            et = em.getTransaction();
-	            et.begin();
-	 
-	            //Find customer and make changes
-	            livre = em.find(Livre.class, titre);
-	            livre.setTitre(nvtitre);
-	 
-	            // Save the customer object
-	            em.persist(livre);
-	            et.commit();
-	        } catch (Exception ex) {
-	            // If there is an exception rollback changes
-	            if (et != null) {
-	                et.rollback();
-	            }
-	            ex.printStackTrace();
-	        } finally {
-	            // Close EntityManager
-	            em.close();
-	        }
-	    }
+	 public void changerTitre(String titre,String nvtitre) {
+		
+		 	EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
+		 	EntityTransaction et = null;
+		 	String query = "SELECT c FROM Livre c WHERE c.titre LIKE :titre";
+			TypedQuery<Livre> tq = em.createQuery(query, Livre.class);
+			Livre livre = null;
+			tq.setParameter("titre", titre);
+			
+			try {
+				livre = tq.getSingleResult();
+				et = em.getTransaction();
+				et.begin();
+				livre = em.find(Livre.class, livre.getId());
+				livre.setTitre(nvtitre);
+				em.persist(livre);
+				et.commit();
+			}catch (NoResultException e) {
+				System.out.println("le livre n'a pas pu etre trouver");
+			} catch (Exception ex) {
+				if (et != null) {
+					et.rollback();
+				}
+				ex.printStackTrace();
+			}
+		}
 	 
 	 
 	 //afficher tout les livres
-	//marche po encore
 	 public void getLivres() {
 	    	EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
 	    	
@@ -158,7 +158,7 @@ public class Livre implements Serializable{
 	    	try {
 	    		// Get matching customer object and output
 	    		livre = tq.getResultList();
-	    		livre.forEach(cust->System.out.println(cust.getTitre() + " " + cust.getAuteur()));
+	    		livre.forEach(livreS->System.out.println("\rTitre: "+livreS.getTitre() + "\rAuteur: " + livreS.getAuteur()+"\rGenre: "+livreS.getGenre()+"\rNombre de pages: "+livreS.getNbrpages()+"\rNombre d'exmplaire disponible: "+livreS.getNbrexmp()));
 	    	}
 	    	catch(NoResultException ex) {
 	    		ex.printStackTrace();
@@ -169,58 +169,32 @@ public class Livre implements Serializable{
 	    }
 	 
 	 
-	 public void changerTitre(String titre, String nvtitre) {
-	        EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
-	        EntityTransaction et = null;
-	        
-	    	Livre livre = null;
-	 
-	        try {
-	            // Get transaction and start
-	            et = em.getTransaction();
-	            et.begin();
-	 
-	            // Find customer and make changes
-	            livre = em.find(Livre.class, titre);
-	            livre.setTitre(nvtitre);
-	 
-	            // Save the customer object
-	            em.persist(livre);
-	            et.commit();
-	        } catch (Exception ex) {
-	            // If there is an exception rollback changes
-	            if (et != null) {
-	                et.rollback();
-	            }
-	            ex.printStackTrace();
-	        } finally {
-	            // Close EntityManager
-	            em.close();
-	        }
-	    }
-	 
-	 public void supprimerLivre(int id) {
-	    	EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
-	        EntityTransaction et = null;
-	        Livre livre = null;
-	 
-	        try {
-	            et = em.getTransaction();
-	            et.begin();
-	            livre = em.find(Livre.class, id);
-	            em.remove(livre);
-	            et.commit();
-	        } catch (Exception ex) {
-	            // If there is an exception rollback changes
-	            if (et != null) {
-	                et.rollback();
-	            }
-	            ex.printStackTrace();
-	        } finally {
-	            // Close EntityManager
-	            em.close();
-	        }
-	    }
+	 //permet de supprimer un livre
+	 public void supprimerLivre(String titre) {
+		  EntityManager em = ENTITY_MANAGER_FACTORY.createEntityManager();
+		  EntityTransaction et = null;
+		  String query = "SELECT c FROM Livre c WHERE c.titre LIKE :titre";
+		  TypedQuery<Livre> tq = em.createQuery(query, Livre.class);
+		  Livre livre = null;
+		  tq.setParameter("titre", titre);
+
+		  try {
+		    livre = tq.getSingleResult();
+		    et = em.getTransaction();
+		    et.begin();
+		    livre = em.find(Livre.class, livre.getId());
+		    em.remove(livre);
+		    et.commit();
+		  } catch (NoResultException e) {
+		    System.out.println("le livre n'a pas pu etre trouver");
+		  } catch (Exception ex) {
+		    if (et != null) {
+		      et.rollback();
+		    }
+		    ex.printStackTrace();
+		  }
+		}
+
 	
 	
 	
